@@ -8,7 +8,13 @@ AGodFloatingActor::AGodFloatingActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	m_Multi = 50.0f;
+	MoveSpeed.X = 0.0f;
+	MoveSpeed.Y = 0.0f;
+	MoveSpeed.Z = 50.0f;
+	RotSpeed.Roll = 0.0f;
+	RotSpeed.Pitch = 0.0f;
+	RotSpeed.Yaw = 20.0f;
+	IsFloating = true;
 
 	// ÉÅÉbÉVÉÖÇÃçÏê¨
 	VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -36,13 +42,20 @@ void AGodFloatingActor::BeginPlay()
 // Called every frame
 void AGodFloatingActor::Tick(float DeltaTime)
 {
+	if (!IsFloating) {
+		return;
+	}
+
 	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
 	float fDelta = GetGameTimeSinceCreation();
 
 	Super::Tick(DeltaTime);
 	
-	Location.Z += (FMath::Sin(fDelta + DeltaTime) - FMath::Sin(fDelta)) * m_Multi;
+	Location += (FMath::Sin(fDelta + DeltaTime) - FMath::Sin(fDelta)) * MoveSpeed;
+	Rotation += (FMath::Sin(DeltaTime)) * RotSpeed;
 
 	SetActorLocation(Location);
+	SetActorRotation(Rotation);
 }
 
